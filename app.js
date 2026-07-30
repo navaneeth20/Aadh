@@ -1,6 +1,6 @@
 /**
  * Aadhav's 1-Hour Interactive Learning Hub | CBSE Class 6
- * JavaScript Engine
+ * JavaScript Engine (Mobile-Responsive Edition)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,7 +27,15 @@ function initNavigation() {
 
       tab.classList.add('active');
       const targetId = tab.getAttribute('data-tab');
-      document.getElementById(targetId).classList.add('active');
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        targetEl.classList.add('active');
+      }
+
+      // If Math tab activated, trigger canvas redraw for proper mobile sizing
+      if (targetId === 'tab-math' && window.resizePolyCanvas) {
+        setTimeout(window.resizePolyCanvas, 50);
+      }
     });
   });
 }
@@ -172,10 +180,11 @@ function initDailyQuestPlanner() {
 
 function renderDaysStrip() {
   const strip = document.getElementById('daysStrip');
+  if (!strip) return;
   strip.innerHTML = '';
   const days = questData[currentWeek] || [];
 
-  days.forEach((dayObj, idx) => {
+  days.forEach((dayObj) => {
     const cardBtn = document.createElement('div');
     cardBtn.className = `day-card-btn ${dayObj.day === currentDay ? 'active' : ''}`;
     cardBtn.innerHTML = `
@@ -198,6 +207,7 @@ function renderDaysStrip() {
 
 function renderSessionCard(dayObj) {
   const container = document.getElementById('sessionCard');
+  if (!container) return;
   container.innerHTML = `
     <div class="session-header-badge">Week ${dayObj.week} • Day ${dayObj.day} Quest Card</div>
     <h3 class="session-title">${dayObj.title}</h3>
@@ -245,12 +255,13 @@ function renderSessionCard(dayObj) {
 
 function incrementStreak() {
   const streakEl = document.getElementById('streakCount');
+  if (!streakEl) return;
   let current = parseInt(streakEl.textContent);
   streakEl.textContent = current + 1;
 }
 
 /* ==========================================================================
-   3. INTERACTIVE MATH POLYGON CANVAS
+   3. INTERACTIVE MATH POLYGON CANVAS (RESPONSIVE)
    ========================================================================== */
 function initPolygonCanvas() {
   const canvas = document.getElementById('polyCanvas');
@@ -269,7 +280,16 @@ function initPolygonCanvas() {
     7: "Heptagon", 8: "Octagon", 9: "Nonagon", 10: "Decagon", 11: "Hendecagon", 12: "Dodecagon"
   };
 
+  function updateCanvasDimensions() {
+    const parentContainer = canvas.parentElement;
+    const parentWidth = parentContainer ? parentContainer.clientWidth : 340;
+    const targetWidth = Math.max(280, Math.min(500, parentWidth - 20));
+    canvas.width = targetWidth;
+    canvas.height = Math.round(targetWidth * 0.82);
+  }
+
   function drawPolygon() {
+    updateCanvasDimensions();
     const n = parseInt(slider.value);
     const diagTotal = (n * (n - 3)) / 2;
 
@@ -283,7 +303,7 @@ function initPolygonCanvas() {
 
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = 150;
+    const radius = Math.min(centerX, centerY) * 0.72;
     const points = [];
 
     // Calculate Vertices
@@ -294,15 +314,15 @@ function initPolygonCanvas() {
       points.push({ x, y });
     }
 
-    // Draw Diagonals first (so they sit under boundary)
+    // Draw Diagonals first
     if (toggleDiagonals.checked && n > 3) {
       ctx.lineWidth = 1.5;
-      ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.65)';
       ctx.setLineDash([4, 4]);
 
       for (let i = 0; i < n; i++) {
         for (let j = i + 2; j < n; j++) {
-          if (i === 0 && j === n - 1) continue; // Skip adjacent boundary edge
+          if (i === 0 && j === n - 1) continue;
           ctx.beginPath();
           ctx.moveTo(points[i].x, points[i].y);
           ctx.lineTo(points[j].x, points[j].y);
@@ -313,7 +333,7 @@ function initPolygonCanvas() {
     }
 
     // Draw Outer Polygon Edges
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3.5;
     ctx.strokeStyle = '#38bdf8';
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -323,14 +343,15 @@ function initPolygonCanvas() {
     ctx.closePath();
     ctx.stroke();
 
-    // Fill polygon subtly
+    // Fill polygon
     ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
     ctx.fill();
 
     // Draw Vertex Nodes & Labels
+    const nodeRadius = Math.max(5, Math.min(8, canvas.width / 50));
     points.forEach((pt, idx) => {
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2);
+      ctx.arc(pt.x, pt.y, nodeRadius, 0, Math.PI * 2);
       ctx.fillStyle = '#f43f5e';
       ctx.fill();
       ctx.lineWidth = 2;
@@ -339,13 +360,17 @@ function initPolygonCanvas() {
 
       // Label
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 14px Outfit, sans-serif';
+      ctx.font = `bold ${Math.max(10, Math.min(13, canvas.width / 32))}px Outfit, sans-serif`;
       const labelAngle = (idx * 2 * Math.PI) / n - Math.PI / 2;
-      const lx = centerX + (radius + 22) * Math.cos(labelAngle);
-      const ly = centerY + (radius + 22) * Math.sin(labelAngle);
-      ctx.fillText(`V${idx + 1}`, lx - 8, ly + 5);
+      const labelOffset = nodeRadius + 14;
+      const lx = centerX + (radius + labelOffset) * Math.cos(labelAngle);
+      const ly = centerY + (radius + labelOffset) * Math.sin(labelAngle);
+      ctx.fillText(`V${idx + 1}`, lx - 6, ly + 4);
     });
   }
+
+  window.resizePolyCanvas = drawPolygon;
+  window.addEventListener('resize', drawPolygon);
 
   slider.addEventListener('input', drawPolygon);
   toggleDiagonals.addEventListener('change', drawPolygon);
@@ -375,11 +400,11 @@ function initScienceLab() {
       if (mat === 'metal' || mat === 'graphite') {
         bulb.className = 'bulb lit';
         bulb.textContent = '💡 ON (CONDUCTOR)';
-        circuitRes.innerHTML = `✅ <strong>${btn.textContent}</strong> is an electrical conductor! Current flows smoothly.`;
+        circuitRes.innerHTML = `✅ <strong>${btn.textContent}</strong> is an electrical conductor! Current flows.`;
       } else {
         bulb.className = 'bulb';
         bulb.textContent = '💡 OFF (INSULATOR)';
-        circuitRes.innerHTML = `❌ <strong>${btn.textContent}</strong> is an insulator! Current is blocked.`;
+        circuitRes.innerHTML = `❌ <strong>${btn.textContent}</strong> is an insulator! Current blocked.`;
       }
     });
   });
@@ -402,14 +427,16 @@ function initScienceLab() {
     });
   });
 
-  dropBtn.addEventListener('click', () => {
-    if (!selectedFood) return;
-    if (selectedFood.hasStarch) {
-      starchRes.innerHTML = `🧪 Iodine added to <strong>${selectedFood.name}</strong> ➔ Turned <strong style="color: #38bdf8;">DEEP BLUE-BLACK</strong>! (Contains Starch)`;
-    } else {
-      starchRes.innerHTML = `🧪 Iodine added to <strong>${selectedFood.name}</strong> ➔ Stayed Yellowish-Brown. (No Starch)`;
-    }
-  });
+  if (dropBtn) {
+    dropBtn.addEventListener('click', () => {
+      if (!selectedFood) return;
+      if (selectedFood.hasStarch) {
+        starchRes.innerHTML = `🧪 Iodine added to <strong>${selectedFood.name}</strong> ➔ Turned <strong style="color: #38bdf8;">DEEP BLUE-BLACK</strong>! (Contains Starch)`;
+      } else {
+        starchRes.innerHTML = `🧪 Iodine added to <strong>${selectedFood.name}</strong> ➔ Stayed Yellowish-Brown. (No Starch)`;
+      }
+    });
+  }
 
   // Density Test Sim
   const objBtns = document.querySelectorAll('.obj-btn');
@@ -424,7 +451,7 @@ function initScienceLab() {
       if (dest === 'bottom') {
         densityRes.innerHTML = `⚓ ${btn.textContent} sank to bottom! Density is higher than water.`;
       } else if (dest === 'middle') {
-        densityRes.innerHTML = `🧊 ${btn.textContent} floats between water & oil! Density is between water and oil.`;
+        densityRes.innerHTML = `🧊 ${btn.textContent} floats between water & oil!`;
       } else {
         densityRes.innerHTML = `🍂 ${btn.textContent} floats on top of oil! Density is lowest.`;
       }
@@ -448,32 +475,45 @@ function initSSTExplorer() {
   const artDesc = document.getElementById('artDesc');
 
   function updateArtifact() {
+    if (!artIcon) return;
     artIcon.textContent = artifacts[artIdx].icon;
     artTitle.textContent = artifacts[artIdx].title;
     artDesc.textContent = artifacts[artIdx].desc;
   }
 
-  document.getElementById('nextArtBtn').addEventListener('click', () => {
-    artIdx = (artIdx + 1) % artifacts.length;
-    updateArtifact();
-  });
-  document.getElementById('prevArtBtn').addEventListener('click', () => {
-    artIdx = (artIdx - 1 + artifacts.length) % artifacts.length;
-    updateArtifact();
-  });
+  const nextBtn = document.getElementById('nextArtBtn');
+  const prevBtn = document.getElementById('prevArtBtn');
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      artIdx = (artIdx + 1) % artifacts.length;
+      updateArtifact();
+    });
+  }
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      artIdx = (artIdx - 1 + artifacts.length) % artifacts.length;
+      updateArtifact();
+    });
+  }
 
   // Globe Rotation
   const globeBall = document.getElementById('globeBall');
   const sunStatus = document.getElementById('sunlightStatus');
   let isRotated = false;
 
-  document.getElementById('rotateGlobeBtn').addEventListener('click', () => {
-    isRotated = !isRotated;
-    globeBall.style.transform = isRotated ? 'rotateY(180deg)' : 'rotateY(0deg)';
-    sunStatus.textContent = isRotated 
-      ? "USA is facing the Sun! ☀️ (Day in New York, Night in India 🌙)"
-      : "India is facing the Sun! ☀️ (Daytime in Delhi)";
-  });
+  const rotateBtn = document.getElementById('rotateGlobeBtn');
+  if (rotateBtn) {
+    rotateBtn.addEventListener('click', () => {
+      isRotated = !isRotated;
+      if (globeBall) globeBall.style.transform = isRotated ? 'rotateY(180deg)' : 'rotateY(0deg)';
+      if (sunStatus) {
+        sunStatus.textContent = isRotated 
+          ? "USA is facing the Sun! ☀️ (Day in NY, Night in India 🌙)"
+          : "India is facing the Sun! ☀️ (Daytime in Delhi)";
+      }
+    });
+  }
 
   // Panchayat Voting
   const optBtns = document.querySelectorAll('.option-btn');
@@ -482,12 +522,14 @@ function initSSTExplorer() {
   optBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const isCorrect = btn.getAttribute('data-correct') === 'true';
-      if (isCorrect) {
-        panFeed.style.color = '#22c55e';
-        panFeed.innerHTML = "✅ Excellent Decision! The Panchayat approves using public funds to deepen the handpump immediately!";
-      } else {
-        panFeed.style.color = '#f43f5e';
-        panFeed.innerHTML = "❌ Ineffective! Gram Panchayat's duty is to take immediate active measures for village welfare.";
+      if (panFeed) {
+        if (isCorrect) {
+          panFeed.style.color = '#22c55e';
+          panFeed.innerHTML = "✅ Excellent Decision! Gram Panchayat approves deepening the handpump using public funds!";
+        } else {
+          panFeed.style.color = '#f43f5e';
+          panFeed.innerHTML = "❌ Ineffective! Gram Panchayat must take active public welfare measures.";
+        }
       }
     });
   });
@@ -507,6 +549,7 @@ function initTrophyCabinet() {
   ];
 
   const container = document.getElementById('trophyGrid');
+  if (!container) return;
   container.innerHTML = '';
 
   trophies.forEach(t => {
