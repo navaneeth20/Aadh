@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aadhav's 1-Hour Interactive Learning Quest | CBSE Class 6</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+      <div class="logo">
+        <span class="logo-icon">🚀</span>
+        <div class="logo-text">
+          <h1>Aadhav's Curiosity Quest</h1>
+          <p>CBSE Class 6 • Daily 1-Hour Interactive Hub</p>
+        </div>
+      </div>
+      
+      <div class="stats-banner">
+        <div class="stat-badge">
+          <span class="stat-icon">🔥</span>
+          <div>
+            <span class="stat-value" id="streakCount">3</span>
+            <span class="stat-label">Day Streak</span>
+          </div>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-icon">⭐</span>
+          <div>
+            <span class="stat-value" id="badgeCount">5</span>
+            <span class="stat-label">Badges</span>
+          </div>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-icon">🎯</span>
+          <div>
+            <span class="stat-value" id="levelText">Lvl 2 Explorer</span>
+            <span class="stat-label">Rank</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-daily">
+        <span class="tab-icon">📅</span> 60-Min Daily Quest
+      </button>
+      <button class="tab-btn" data-tab="tab-math">
+        <span class="tab-icon">📐</span> Math Playground
+      </button>
+      <button class="tab-btn" data-tab="tab-science">
+        <span class="tab-icon">🔬</span> Science Lab
+      </button>
+      <button class="tab-btn" data-tab="tab-sst">
+        <span class="tab-icon">🌍</span> Social Science Time-Machine
+      </button>
+      <button class="tab-btn" data-tab="tab-trophies">
+        <span class="tab-icon">🏆</span> Trophy Cabinet
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      <!-- TAB 1: DAILY 60-MIN QUEST PLANNER -->
+      <section id="tab-daily" class="tab-content active">
+        <div class="section-header">
+          <h2>Today's 60-Minute Interactive Session</h2>
+          <p>Select a day to load your step-by-step discussion triggers, hands-on tasks, and wrap-up challenge!</p>
+        </div>
+
+        <!-- Day Selector Grid -->
+        <div class="week-selector">
+          <button class="week-btn active" data-week="1">Week 1: Shapes & Circuits</button>
+          <button class="week-btn" data-week="2">Week 2: Numbers & Plants</button>
+          <button class="week-btn" data-week="3">Week 3: Area & Skeleton</button>
+          <button class="week-btn" data-week="4">Week 4: 3D Nets & Shadows</button>
+        </div>
+
+        <div class="days-strip" id="daysStrip">
+          <!-- Populated dynamically via app.js -->
+        </div>
+
+        <!-- Active Day Session Card -->
+        <div class="session-card" id="sessionCard">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </section>
+
+      <!-- TAB 2: MATH PLAYGROUND -->
+      <section id="tab-math" class="tab-content">
+        <div class="section-header">
+          <h2>📐 Polygon & Diagonal Visualizer</h2>
+          <p>Explore vertices, sides, and internal diagonals dynamically! Discover the secret diagonal formula \(\frac{n(n-3)}{2}\).</p>
+        </div>
+
+        <div class="math-tool-layout">
+          <div class="controls-panel card">
+            <h3>Polygon Controls</h3>
+            
+            <div class="control-group">
+              <label for="sideSlider">Number of Sides (Vertices): <strong id="sidesValue" class="accent-text">5 (Pentagon)</strong></label>
+              <input type="range" id="sideSlider" min="3" max="12" value="5" step="1">
+            </div>
+
+            <div class="toggle-group">
+              <label class="switch">
+                <input type="checkbox" id="toggleDiagonals" checked>
+                <span class="slider round"></span>
+              </label>
+              <span>Show Internal Diagonals</span>
+            </div>
+
+            <div class="toggle-group">
+              <label class="switch">
+                <input type="checkbox" id="animateDiagonals">
+                <span class="slider round"></span>
+              </label>
+              <span>Animate Diagonal Draw</span>
+            </div>
+
+            <div class="formula-box">
+              <h4>Diagonal Formula Discovery</h4>
+              <p class="formula-math">Total Diagonals = <span class="highlight-code">n × (n - 3) / 2</span></p>
+              <p id="formulaCalcText">For n = 5: (5 × 2) / 2 = <strong>5 diagonals</strong></p>
+            </div>
+
+            <div class="polygon-info">
+              <div class="info-chip">Shape: <strong id="shapeName">Pentagon</strong></div>
+              <div class="info-chip">Vertices: <strong id="vertexCount">5</strong></div>
+              <div class="info-chip">Diagonals: <strong id="diagonalCount" class="accent-text">5</strong></div>
+            </div>
+          </div>
+
+          <div class="canvas-panel card">
+            <div class="canvas-header">
+              <span>Interactive Geometry Canvas</span>
+              <button class="btn btn-sm btn-secondary" id="resetCanvasBtn">Reset View</button>
+            </div>
+            <div class="canvas-container">
+              <canvas id="polyCanvas" width="500" height="420"></canvas>
+            </div>
+            <div class="canvas-footer-tip">
+              💡 <em>Parent Tip for Aadhav: Ask him "Why does a triangle (n=3) have 0 diagonals?" (Because every vertex is adjacent to all other vertices!)</em>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: SCIENCE LAB -->
+      <section id="tab-science" class="tab-content">
+        <div class="section-header">
+          <h2>🔬 Science Mystery & Experiment Lab</h2>
+          <p>Interactive simulations & home experiment guides to make science unforgettable!</p>
+        </div>
+
+        <div class="science-grid">
+          <!-- Card 1: Circuit Simulator -->
+          <div class="experiment-card card">
+            <div class="exp-badge">Physics</div>
+            <h3>⚡ DIY Circuit & Conductors</h3>
+            <p>Predict which item will light up the bulb in a simple circuit!</p>
+            
+            <div class="sim-box">
+              <div class="circuit-view">
+                <div class="battery">🔋 9V Battery</div>
+                <div class="wire-left"></div>
+                <div class="gap-slot" id="testMaterialSlot">Select Material</div>
+                <div class="wire-right"></div>
+                <div class="bulb" id="circuitBulb">💡 OFF</div>
+              </div>
+              <div class="material-buttons">
+                <button class="mat-btn" data-material="metal">Spoon (Metal)</button>
+                <button class="mat-btn" data-material="wood">Pencil Wood</button>
+                <button class="mat-btn" data-material="graphite">Pencil Graphite ✏️</button>
+                <button class="mat-btn" data-material="plastic">Plastic Eraser</button>
+              </div>
+            </div>
+            <div class="exp-result" id="circuitResult">
+              Click a material to complete the circuit gap!
+            </div>
+          </div>
+
+          <!-- Card 2: Food Starch Test -->
+          <div class="experiment-card card">
+            <div class="exp-badge">Biology & Chemistry</div>
+            <h3>🥔 The Iodine Starch Test</h3>
+            <p>See what happens when iodine drop touches different foods!</p>
+            <div class="sim-box">
+              <div class="food-plate">
+                <button class="food-item" data-starch="true" data-name="Potato Slice">🥔 Potato</button>
+                <button class="food-item" data-starch="true" data-name="Boiled Rice">🍚 Boiled Rice</button>
+                <button class="food-item" data-starch="false" data-name="Egg White">🥚 Egg White</button>
+                <button class="food-item" data-starch="false" data-name="Cucumber">🥒 Cucumber</button>
+              </div>
+              <div class="dropper-area">
+                <div class="sample-display" id="sampleDisplay">Select a food sample</div>
+                <button class="btn btn-primary" id="dropIodineBtn" disabled>Drop Iodine 🧪</button>
+              </div>
+            </div>
+            <div class="exp-result" id="starchResult">
+              Starch + Iodine = Deep Blue-Black Color!
+            </div>
+          </div>
+
+          <!-- Card 3: Floating & Density Test -->
+          <div class="experiment-card card">
+            <div class="exp-badge">Chemistry</div>
+            <h3>🌊 Density & Floating Race</h3>
+            <p>Will it sink or float? Test water vs oil vs objects!</p>
+            <div class="sim-box">
+              <div class="beaker">
+                <div class="oil-layer">Oil (Less Dense)</div>
+                <div class="water-layer">Water (Denser)</div>
+                <div class="beaker-objects" id="beakerObjects"></div>
+              </div>
+              <div class="object-selector">
+                <button class="obj-btn" data-dest="bottom">🔑 Iron Key</button>
+                <button class="obj-btn" data-dest="top">🍂 Dried Leaf</button>
+                <button class="obj-btn" data-dest="middle">🧊 Ice Cube</button>
+              </div>
+            </div>
+            <div class="exp-result" id="densityResult">
+              Drop items into the beaker to observe density layers!
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: SOCIAL SCIENCE TIME MACHINE -->
+      <section id="tab-sst" class="tab-content">
+        <div class="section-header">
+          <h2>🌍 Social Science Time-Machine & Globe</h2>
+          <p>Step into ancient Indus Valley, rotate the Earth globe, and explore how Democracy works!</p>
+        </div>
+
+        <div class="sst-grid">
+          <!-- Harappan Detective -->
+          <div class="sst-card card">
+            <div class="sst-badge history">History • 2500 BCE</div>
+            <h3>🏺 Harappan Detective</h3>
+            <p>Investigate artifacts discovered in Indus Valley cities (Harappa & Mohenjo-daro).</p>
+            <div class="artifact-viewer" id="artifactViewer">
+              <div class="artifact-img" id="artIcon">🧱</div>
+              <h4 id="artTitle">Baked Bricks with Interlocking Pattern</h4>
+              <p id="artDesc">Harappans used standardized 1:2:4 ratio bricks laid in interlocking patterns so houses survived thousands of years!</p>
+            </div>
+            <div class="artifact-nav">
+              <button class="btn btn-sm btn-outline" id="prevArtBtn">← Previous Artifact</button>
+              <button class="btn btn-sm btn-primary" id="nextArtBtn">Next Artifact →</button>
+            </div>
+          </div>
+
+          <!-- Globe Day & Night Sim -->
+          <div class="sst-card card">
+            <div class="sst-badge geo">Geography</div>
+            <h3>🌏 Earth Rotation & Day/Night</h3>
+            <p>Simulate sunlight hitting rotating Earth. See why India has day while USA has night!</p>
+            <div class="globe-sim">
+              <div class="sun-glow">☀️ Sun Rays</div>
+              <div class="globe-ball" id="globeBall">
+                <div class="india-marker" id="indiaMarker">🇮🇳 India</div>
+                <div class="usa-marker" id="usaMarker">🇺🇸 USA</div>
+              </div>
+            </div>
+            <div class="globe-controls">
+              <button class="btn btn-primary" id="rotateGlobeBtn">Rotate Earth 180° 🔄</button>
+              <span id="sunlightStatus">India is facing the Sun! ☀️ (Daytime in Delhi)</span>
+            </div>
+          </div>
+
+          <!-- Gram Panchayat Roleplay -->
+          <div class="sst-card card">
+            <div class="sst-badge civics">Civics</div>
+            <h3>🗳️ Gram Panchayat Decision Game</h3>
+            <p>You and Aadhav are members of the Village Panchayat. Solve the village crisis!</p>
+            <div class="panchayat-box" id="panchayatBox">
+              <div class="problem-statement">
+                <strong>Problem:</strong> The handpump in Ward 3 has gone dry. Villagers are walking 3 km for water!
+              </div>
+              <div class="options-list">
+                <button class="option-btn" data-correct="false">Option A: Wait for next year's monsoon rain.</button>
+                <button class="option-btn" data-correct="true">Option B: Deepen existing handpump & clean village tank using Gram Panchayat fund.</button>
+                <button class="option-btn" data-correct="false">Option C: Tell villagers to buy bottled water.</button>
+              </div>
+              <div class="panchayat-feedback" id="panchayatFeedback"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: TROPHY CABINET -->
+      <section id="tab-trophies" class="tab-content">
+        <div class="section-header">
+          <h2>🏆 Aadhav's Curiosity Trophy Cabinet</h2>
+          <p>Complete daily 1-hour sessions to unlock awesome badges!</p>
+        </div>
+
+        <div class="trophy-grid" id="trophyGrid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
