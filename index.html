@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=2.0.0">
+  <link rel="stylesheet" href="styles.css?v=3.0.0">
 </head>
 <body>
   <div class="app-container">
@@ -271,29 +271,13 @@
       <section id="tab-sst" class="tab-content">
         <div class="section-header">
           <h2>🌍 Social Science Time-Machine & Globe</h2>
-          <p>Step into ancient Indus Valley, Ashoka's Empire, Earth globe, and Democracy!</p>
+          <p>Step into ancient Indus Valley, Ashoka's Empire, Earth globe, and Latitudes!</p>
         </div>
 
         <div class="sst-grid">
-          <!-- Harappan Detective -->
-          <div class="sst-card card">
-            <div class="sst-badge history">History • 2500 BCE</div>
-            <h3>🏺 Harappan Detective</h3>
-            <p>Investigate artifacts discovered in Indus Valley cities (Harappa & Mohenjo-daro).</p>
-            <div class="artifact-viewer" id="artifactViewer">
-              <div class="artifact-img" id="artIcon">🧱</div>
-              <h4 id="artTitle">Baked Bricks with Interlocking Pattern</h4>
-              <p id="artDesc">Harappans used standardized 1:2:4 ratio bricks laid in interlocking patterns so houses survived thousands of years!</p>
-            </div>
-            <div class="artifact-nav">
-              <button class="btn btn-sm btn-outline" id="prevArtBtn">← Previous Artifact</button>
-              <button class="btn btn-sm btn-primary" id="nextArtBtn">Next Artifact →</button>
-            </div>
-          </div>
-
-          <!-- Globe Day & Night Sim -->
-          <div class="sst-card card">
-            <div class="sst-badge geo">Geography</div>
+          <!-- Card 1: Day 3 Globe & Seasons Sim -->
+          <div class="sst-card card" id="cardGlobeSim">
+            <div class="sst-badge geo">Geography • Day 3 Special</div>
             <h3>🌏 Earth Rotation & Day/Night</h3>
             <p>Simulate sunlight hitting rotating Earth. See why India has day while USA has night!</p>
             <div class="globe-sim">
@@ -309,7 +293,54 @@
             </div>
           </div>
 
-          <!-- Gram Panchayat Roleplay -->
+          <!-- Card 2: Day 3 Latitudes & Time Zones Explorer -->
+          <div class="sst-card card">
+            <div class="sst-badge geo">Geography • Latitudes Grid</div>
+            <h3>🌐 Latitudes & Greenwich Time Calculator</h3>
+            <p>Click latitude lines or calculate India Standard Time (IST)!</p>
+            
+            <div class="latitude-box card" style="background: rgba(15, 23, 42, 0.8); margin: 12px 0;">
+              <div class="lat-line-buttons">
+                <button class="lat-btn btn btn-sm btn-outline" data-lat="Tropic of Cancer (23.5° N) — Passes through 8 Indian States!">Tropic of Cancer (23.5° N) 🇮🇳</button>
+                <button class="lat-btn btn btn-sm btn-outline" data-lat="Equator (0°) — Equal day and night all year round!">Equator (0°)</button>
+                <button class="lat-btn btn btn-sm btn-outline" data-lat="Tropic of Capricorn (23.5° S) — Southern Hemisphere summer mark!">Tropic of Capricorn (23.5° S)</button>
+                <button class="lat-btn btn btn-sm btn-outline" data-lat="Prime Meridian (0° Greenwich) — Starting line for World Time Zones!">Prime Meridian (0° London)</button>
+              </div>
+              <div class="lat-info-display" id="latInfoDisplay" style="margin-top: 10px; font-size: 0.85rem; color: var(--accent-primary);">
+                Click a latitude line to reveal its secret!
+              </div>
+            </div>
+
+            <!-- Day 3 Interactive Quiz Cards -->
+            <div class="day3-challenge-box" style="margin-top: 12px; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--accent-purple); padding: 12px; border-radius: var(--radius-md);">
+              <h4 style="color: var(--accent-purple); font-size: 0.9rem; margin-bottom: 6px;">🧠 Day 3 Geography Mystery Question</h4>
+              <p style="font-size: 0.85rem; margin-bottom: 8px;">If it is 12:00 PM Noon at London Greenwich (0°), what time is it in Delhi, India (+5:30 IST)?</p>
+              <div class="quiz-options" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-sm btn-outline quiz-ans-btn" data-correct="false">3:00 PM</button>
+                <button class="btn btn-sm btn-outline quiz-ans-btn" data-correct="true">5:30 PM ✅</button>
+                <button class="btn btn-sm btn-outline quiz-ans-btn" data-correct="false">9:00 PM</button>
+              </div>
+              <div class="quiz-feedback" id="quizFeedbackText" style="margin-top: 6px; font-size: 0.8rem; font-weight: 600;"></div>
+            </div>
+          </div>
+
+          <!-- Card 3: Harappan Detective -->
+          <div class="sst-card card">
+            <div class="sst-badge history">History • 2500 BCE</div>
+            <h3>🏺 Harappan Detective</h3>
+            <p>Investigate artifacts discovered in Indus Valley cities (Harappa & Mohenjo-daro).</p>
+            <div class="artifact-viewer" id="artifactViewer">
+              <div class="artifact-img" id="artIcon">🧱</div>
+              <h4 id="artTitle">Baked Bricks with Interlocking Pattern</h4>
+              <p id="artDesc">Harappans used standardized 1:2:4 ratio bricks laid in interlocking patterns so houses survived thousands of years!</p>
+            </div>
+            <div class="artifact-nav">
+              <button class="btn btn-sm btn-outline" id="prevArtBtn">← Previous Artifact</button>
+              <button class="btn btn-sm btn-primary" id="nextArtBtn">Next Artifact →</button>
+            </div>
+          </div>
+
+          <!-- Card 4: Gram Panchayat Roleplay -->
           <div class="sst-card card">
             <div class="sst-badge civics">Civics</div>
             <h3>🗳️ Gram Panchayat Decision Game</h3>
@@ -343,6 +374,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=2.0.0"></script>
+  <script src="app.js?v=3.0.0"></script>
 </body>
 </html>

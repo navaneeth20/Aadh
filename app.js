@@ -1,6 +1,6 @@
 /**
  * Aadhav's 1-Hour Interactive Learning Hub | CBSE Class 6
- * JavaScript Engine (Fixed Day 2 & Interactive Clock Support)
+ * JavaScript Engine (Day 3 Geography & SST Enhancements)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
 let appState = {
   streak: 1,
   completedDays: [1],
-  badgesUnlocked: ['Polygon Master', 'Angle Hunter'],
+  badgesUnlocked: ['Polygon Master', 'Angle Hunter', 'Globe Trotter'],
   currentWeek: 1,
-  currentDay: 2
+  currentDay: 3
 };
 
 function loadSavedState() {
@@ -60,7 +60,6 @@ function updateHeaderStats() {
    ========================================================================== */
 function initNavigation() {
   const tabs = document.querySelectorAll('.tab-btn');
-  const contents = document.querySelectorAll('.tab-content');
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -168,9 +167,11 @@ const questData = {
       mathTime: "15 Mins",
       mathTitle: "🔢 Giant Tape Floor Number Line",
       mathDesc: "Stick tape on floor (-5 to +5). Jump forward for positive addition, backward for negative subtraction! Real life: Submarines (- depth) vs Aeroplanes (+ height).",
+      mathAction: "openPolyTool",
       scienceTime: "20 Mins",
       scienceTitle: "🌱 Water Transport in Plant Stems",
       scienceDesc: "Place a plant stem or white flower in water with blue food ink. Observe colored xylem veins transporting water up!",
+      scienceAction: "openCircuitTool",
       sstTime: "20 Mins",
       sstTitle: "🌏 Flashlight Globe & Earth Rotation",
       sstDesc: "Shine a flashlight on a spinning globe in a dark room. Observe Earth's rotation causing day in India while USA is in night!",
@@ -253,7 +254,6 @@ function initDailyQuestPlanner() {
       weekBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       appState.currentWeek = parseInt(btn.getAttribute('data-week'));
-      // Pick first day of selected week
       appState.currentDay = (appState.currentWeek - 1) * 6 + 1;
       saveState();
       renderDaysStrip();
@@ -276,7 +276,6 @@ function renderDaysStrip() {
   });
 
   const days = questData[appState.currentWeek] || [];
-
   let selectedDayObj = days.find(d => d.day === appState.currentDay) || days[0];
 
   days.forEach((dayObj) => {
@@ -366,8 +365,10 @@ function renderSessionCard(dayObj) {
         if (btnPoly) btnPoly.click();
       } else if (act === 'openStarchTool' || act === 'openCircuitTool') {
         switchTab('tab-science');
-      } else if (act === 'openGlobeTool' || act === 'openHarappaTool' || act === 'openCivicsTool') {
+      } else if (act === 'openGlobeTool' || act === 'openHarappaTool' || act === 'openCivicsTool' || act === 'openAshokaTool') {
         switchTab('tab-sst');
+        const cardGlobe = document.getElementById('cardGlobeSim');
+        if (cardGlobe) cardGlobe.scrollIntoView({ behavior: 'smooth' });
       }
     });
   });
@@ -510,7 +511,7 @@ function initPolygonCanvas() {
 }
 
 /* ==========================================================================
-   4. INTERACTIVE CLOCK ANGLE CANVAS ENGINE (DAY 2 FEATURE)
+   4. INTERACTIVE CLOCK ANGLE CANVAS ENGINE
    ========================================================================== */
 function initClockCanvas() {
   const canvas = document.getElementById('clockCanvas');
@@ -533,12 +534,8 @@ function initClockCanvas() {
 
     if (hourValText) hourValText.textContent = hourString;
 
-    // Calculate angle between Hour hand and Minute hand (0 minutes for standard hours)
-    // Minute hand is always at 12 o'clock (0 degrees)
-    // Hour hand angle = (hours % 12) * 30 degrees
     const hourAngleDeg = (hours % 12) * 30;
-    const minuteAngleDeg = 0; // Fixed at 12 o'clock
-    let diffAngle = Math.abs(hourAngleDeg - minuteAngleDeg);
+    let diffAngle = Math.abs(hourAngleDeg);
     if (diffAngle > 180) diffAngle = 360 - diffAngle;
 
     if (angleDegText) angleDegText.innerHTML = `Angle Between Hands: <strong>${diffAngle}°</strong>`;
@@ -562,14 +559,12 @@ function initClockCanvas() {
 
     if (angleCatText) angleCatText.innerHTML = `Classification: <strong style="color: ${catColor};">${catName}</strong>`;
 
-    // Clear Canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = canvas.width * 0.4;
 
-    // Outer Clock Face
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
@@ -578,7 +573,6 @@ function initClockCanvas() {
     ctx.strokeStyle = '#38bdf8';
     ctx.stroke();
 
-    // Clock Numbers 1 to 12
     ctx.fillStyle = '#f8fafc';
     ctx.font = `bold ${Math.max(12, Math.min(16, canvas.width / 24))}px Outfit, sans-serif`;
     ctx.textAlign = 'center';
@@ -591,39 +585,35 @@ function initClockCanvas() {
       ctx.fillText(num.toString(), nx, ny);
     }
 
-    // Draw Shaded Angle Arc between 12 o'clock and Hour hand
-    const startRad = -Math.PI / 2; // 12 o'clock
+    const startRad = -Math.PI / 2;
     const endRad = ((hours % 12) * Math.PI) / 6 - Math.PI / 2;
 
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     ctx.arc(centerX, centerY, radius * 0.45, startRad, endRad, false);
     ctx.closePath();
-    ctx.fillStyle = `${catColor}33`; // 20% opacity color
+    ctx.fillStyle = `${catColor}33`;
     ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = catColor;
     ctx.stroke();
 
-    // Minute Hand (Fixed at 12 o'clock - top)
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     ctx.lineTo(centerX, centerY - radius * 0.75);
     ctx.lineWidth = 4;
-    ctx.strokeStyle = '#22c55e'; // Green Minute Hand
+    ctx.strokeStyle = '#22c55e';
     ctx.stroke();
 
-    // Hour Hand (Rotates with slider)
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     const hx = centerX + radius * 0.52 * Math.cos(endRad);
     const hy = centerY + radius * 0.52 * Math.sin(endRad);
     ctx.lineTo(hx, hy);
     ctx.lineWidth = 6;
-    ctx.strokeStyle = '#f59e0b'; // Amber Hour Hand
+    ctx.strokeStyle = '#f59e0b';
     ctx.stroke();
 
-    // Center Cap Node
     ctx.beginPath();
     ctx.arc(centerX, centerY, 7, 0, Math.PI * 2);
     ctx.fillStyle = '#ffffff';
@@ -635,7 +625,6 @@ function initClockCanvas() {
 
   if (hourSlider) hourSlider.addEventListener('input', drawClock);
 
-  // Preset Buttons
   document.querySelectorAll('.clock-preset').forEach(btn => {
     btn.addEventListener('click', () => {
       const h = parseFloat(btn.getAttribute('data-hour'));
@@ -648,7 +637,7 @@ function initClockCanvas() {
 }
 
 /* ==========================================================================
-   5. SCIENCE LAB & SST EXPLORER
+   5. SCIENCE LAB & SST EXPLORER (DAY 3 ENHANCED)
    ========================================================================== */
 function initScienceLab() {
   const matBtns = document.querySelectorAll('.mat-btn');
@@ -752,6 +741,7 @@ function initSSTExplorer() {
     });
   }
 
+  // Globe Rotation
   const globeBall = document.getElementById('globeBall');
   const sunStatus = document.getElementById('sunlightStatus');
   let isRotated = false;
@@ -769,6 +759,37 @@ function initSSTExplorer() {
     });
   }
 
+  // Latitudes Line Buttons
+  const latBtns = document.querySelectorAll('.lat-btn');
+  const latDisp = document.getElementById('latInfoDisplay');
+
+  latBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const info = btn.getAttribute('data-lat');
+      if (latDisp) latDisp.innerHTML = `🌐 <strong>${info}</strong>`;
+    });
+  });
+
+  // Day 3 Quiz Handlers
+  const quizBtns = document.querySelectorAll('.quiz-ans-btn');
+  const quizFeedback = document.getElementById('quizFeedbackText');
+
+  quizBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isCorrect = btn.getAttribute('data-correct') === 'true';
+      if (quizFeedback) {
+        if (isCorrect) {
+          quizFeedback.style.color = '#22c55e';
+          quizFeedback.innerHTML = "🎉 Correct! India is at 82.5° E longitude, which is exactly +5 hours and 30 minutes ahead of GMT! So 12:00 PM in London = 5:30 PM in India!";
+        } else {
+          quizFeedback.style.color = '#f43f5e';
+          quizFeedback.innerHTML = "❌ Try again! Hint: India Standard Time (IST) is 5 hours and 30 minutes ahead of Greenwich Mean Time (+5:30).";
+        }
+      }
+    });
+  });
+
+  // Panchayat Voting
   const optBtns = document.querySelectorAll('.option-btn');
   const panFeed = document.getElementById('panchayatFeedback');
 
