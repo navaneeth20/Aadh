@@ -25,21 +25,21 @@
         <div class="stat-badge">
           <span class="stat-icon">🔥</span>
           <div>
-            <span class="stat-value" id="streakCount">3</span>
+            <span class="stat-value" id="streakCount">1</span>
             <span class="stat-label">Day Streak</span>
           </div>
         </div>
         <div class="stat-badge">
           <span class="stat-icon">⭐</span>
           <div>
-            <span class="stat-value" id="badgeCount">5</span>
+            <span class="stat-value" id="badgeCount">2</span>
             <span class="stat-label">Badges</span>
           </div>
         </div>
         <div class="stat-badge">
           <span class="stat-icon">🎯</span>
           <div>
-            <span class="stat-value" id="levelText">Lvl 2 Explorer</span>
+            <span class="stat-value" id="levelText">Lvl 1 Explorer</span>
             <span class="stat-label">Rank</span>
           </div>
         </div>
@@ -95,11 +95,17 @@
       <!-- TAB 2: MATH PLAYGROUND -->
       <section id="tab-math" class="tab-content">
         <div class="section-header">
-          <h2>📐 Polygon & Diagonal Visualizer</h2>
-          <p>Explore vertices, sides, and internal diagonals dynamically! Discover the secret diagonal formula \(\frac{n(n-3)}{2}\).</p>
+          <h2>📐 Math Playground</h2>
+          <p>Switch between Interactive Polygons & Clock Angles to master 6th grade geometry!</p>
         </div>
 
-        <div class="math-tool-layout">
+        <div class="math-tool-selector">
+          <button class="tool-switch-btn active" id="btnToolPolygon">📐 Polygon & Diagonals</button>
+          <button class="tool-switch-btn" id="btnToolClock">🕒 Clock Hand Angles (Day 2)</button>
+        </div>
+
+        <!-- TOOL 1: POLYGON VISUALIZER -->
+        <div id="toolPolygonView" class="math-tool-layout">
           <div class="controls-panel card">
             <h3>Polygon Controls</h3>
             
@@ -114,14 +120,6 @@
                 <span class="slider round"></span>
               </label>
               <span>Show Internal Diagonals</span>
-            </div>
-
-            <div class="toggle-group">
-              <label class="switch">
-                <input type="checkbox" id="animateDiagonals">
-                <span class="slider round"></span>
-              </label>
-              <span>Animate Diagonal Draw</span>
             </div>
 
             <div class="formula-box">
@@ -147,6 +145,43 @@
             </div>
             <div class="canvas-footer-tip">
               💡 <em>Parent Tip for Aadhav: Ask him "Why does a triangle (n=3) have 0 diagonals?" (Because every vertex is adjacent to all other vertices!)</em>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOL 2: CLOCK ANGLES VISUALIZER (DAY 2 SPECIAL) -->
+        <div id="toolClockView" class="math-tool-layout" style="display: none;">
+          <div class="controls-panel card">
+            <h3>🕒 Clock Angle Controls</h3>
+            
+            <div class="control-group">
+              <label for="clockHourSlider">Hour Hand: <strong id="clockHourValue" class="accent-text">3:00</strong></label>
+              <input type="range" id="clockHourSlider" min="0" max="12" value="3" step="0.5">
+            </div>
+
+            <div class="quick-preset-btns">
+              <button class="btn btn-sm btn-outline clock-preset" data-hour="3">3:00 (Right 90°)</button>
+              <button class="btn btn-sm btn-outline clock-preset" data-hour="1">1:00 (Acute 30°)</button>
+              <button class="btn btn-sm btn-outline clock-preset" data-hour="4">4:00 (Obtuse 120°)</button>
+              <button class="btn btn-sm btn-outline clock-preset" data-hour="6">6:00 (Straight 180°)</button>
+            </div>
+
+            <div class="formula-box">
+              <h4>Angle Type Detector</h4>
+              <p class="formula-math" id="clockAngleDegrees">Angle: <strong>90°</strong></p>
+              <p id="clockAngleCategory">Classification: <strong style="color: var(--accent-amber);">RIGHT ANGLE</strong></p>
+            </div>
+          </div>
+
+          <div class="canvas-panel card">
+            <div class="canvas-header">
+              <span>Interactive Analog Clock Canvas</span>
+            </div>
+            <div class="canvas-container">
+              <canvas id="clockCanvas" width="400" height="360"></canvas>
+            </div>
+            <div class="canvas-footer-tip">
+              💡 <em>Day 2 Challenge for Aadhav: Find a room clock that shows an acute angle right now!</em>
             </div>
           </div>
         </div>
@@ -187,9 +222,9 @@
           </div>
 
           <!-- Card 2: Food Starch Test -->
-          <div class="experiment-card card">
+          <div class="experiment-card card" id="cardStarchTest">
             <div class="exp-badge">Biology & Chemistry</div>
-            <h3>🥔 The Iodine Starch Test</h3>
+            <h3>🥔 The Iodine Starch Test (Day 2 Lab)</h3>
             <p>See what happens when iodine drop touches different foods!</p>
             <div class="sim-box">
               <div class="food-plate">
@@ -236,7 +271,7 @@
       <section id="tab-sst" class="tab-content">
         <div class="section-header">
           <h2>🌍 Social Science Time-Machine & Globe</h2>
-          <p>Step into ancient Indus Valley, rotate the Earth globe, and explore how Democracy works!</p>
+          <p>Step into ancient Indus Valley, Ashoka's Empire, Earth globe, and Democracy!</p>
         </div>
 
         <div class="sst-grid">
