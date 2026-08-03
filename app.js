@@ -1,6 +1,6 @@
 /**
  * Aadhav's 1-Hour Interactive Learning Hub | CBSE Class 6
- * JavaScript Engine (Day 3 Geography & SST Enhancements)
+ * JavaScript Engine (v4.0.0 - Full Interactive Tool Suite)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initDailyQuestPlanner();
   initPolygonCanvas();
   initClockCanvas();
+  initNumberLineCanvas();
+  initFractionCanvas();
   initScienceLab();
   initSSTExplorer();
   initTrophyCabinet();
@@ -68,29 +70,26 @@ function initNavigation() {
     });
   });
 
-  // Math Tool Switcher (Polygon vs Clock)
-  const btnPoly = document.getElementById('btnToolPolygon');
-  const btnClock = document.getElementById('btnToolClock');
-  const polyView = document.getElementById('toolPolygonView');
-  const clockView = document.getElementById('toolClockView');
+  // Math Tool Switcher Buttons
+  const toolSwitchBtns = document.querySelectorAll('.tool-switch-btn');
+  toolSwitchBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      toolSwitchBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-  if (btnPoly && btnClock) {
-    btnPoly.addEventListener('click', () => {
-      btnPoly.classList.add('active');
-      btnClock.classList.remove('active');
-      polyView.style.display = 'grid';
-      clockView.style.display = 'none';
-      if (window.resizePolyCanvas) setTimeout(window.resizePolyCanvas, 50);
-    });
+      const targetViewId = btn.getAttribute('data-view');
+      document.querySelectorAll('.math-tool-panel').forEach(p => p.style.display = 'none');
 
-    btnClock.addEventListener('click', () => {
-      btnClock.classList.add('active');
-      btnPoly.classList.remove('active');
-      clockView.style.display = 'grid';
-      polyView.style.display = 'none';
-      if (window.drawClockCanvas) setTimeout(window.drawClockCanvas, 50);
+      const panel = document.getElementById(targetViewId);
+      if (panel) {
+        panel.style.display = 'grid';
+        if (targetViewId === 'toolPolygonView' && window.resizePolyCanvas) setTimeout(window.resizePolyCanvas, 50);
+        if (targetViewId === 'toolClockView' && window.drawClockCanvas) setTimeout(window.drawClockCanvas, 50);
+        if (targetViewId === 'toolNumberLineView' && window.drawNumberLineCanvas) setTimeout(window.drawNumberLineCanvas, 50);
+        if (targetViewId === 'toolFractionsView' && window.drawFractionCanvas) setTimeout(window.drawFractionCanvas, 50);
+      }
     });
-  }
+  });
 }
 
 function switchTab(targetId) {
@@ -104,7 +103,9 @@ function switchTab(targetId) {
   const targetEl = document.getElementById(targetId);
 
   if (activeTab) activeTab.classList.add('active');
-  if (targetEl) targetEl.classList.add('active');
+  if (targetEl) {
+    targetEl.classList.add('active');
+  }
 
   if (targetId === 'tab-math') {
     if (window.resizePolyCanvas) setTimeout(window.resizePolyCanvas, 50);
@@ -113,7 +114,7 @@ function switchTab(targetId) {
 }
 
 /* ==========================================================================
-   2. DAILY 60-MIN QUEST CURRICULUM (24 DISTINCT DAYS Across 4 WEEKS)
+   2. DAILY 60-MIN QUEST CURRICULUM (24 DISTINCT DAYS)
    ========================================================================== */
 const questData = {
   1: [
@@ -129,11 +130,11 @@ const questData = {
       scienceTime: "20 Mins",
       scienceTitle: "⚡ Build a Paperclip Switch & Circuit",
       scienceDesc: "Use an AA battery, wire, and small bulb/LED. Place a metal spoon, pencil wood, eraser, and graphite lead in the circuit gap to test conductors vs insulators!",
-      scienceAction: "openCircuitTool",
+      scienceAction: "openCircuitSim",
       sstTime: "20 Mins",
       sstTitle: "🏺 Indus Valley Detective Mystery",
       sstDesc: "Explore Harappa & Mohenjo-daro! Why did people 4,500 years ago build underground drainage and baked-brick houses?",
-      sstAction: "openHarappaTool",
+      sstAction: "openHarappaSim",
       recapTitle: "🏆 5-Min Teach-the-Parent Challenge",
       recapDesc: "Aadhav explains to you: 'Why does a pencil graphite conduct electricity, but the wood wrapper doesn't?'",
       parentScript: "💬 Parent Discussion Starter: 'Aadhav, if a pentagon has 5 sides and 5 diagonals, how many diagonals do you guess a 10-sided Decagon has? Let's check the formula!'"
@@ -150,11 +151,11 @@ const questData = {
       scienceTime: "20 Mins",
       scienceTitle: "🥔 The Iodine Food Starch Test",
       scienceDesc: "Drop iodine solution on potato slices, boiled rice, cucumber, and egg white. Watch starchy foods turn dark blue-black!",
-      scienceAction: "openStarchTool",
+      scienceAction: "openStarchSim",
       sstTime: "20 Mins",
       sstTitle: "📜 Emperor Ashoka & Rock Edicts",
       sstDesc: "Why did a conqueror king abandon war after Kalinga? Reading rock pillar messages carved 2,300 years ago.",
-      sstAction: "openAshokaTool",
+      sstAction: "openGlobeSim",
       recapTitle: "🏆 5-Min Teach-the-Parent Challenge",
       recapDesc: "Aadhav shows you 3 angles using his arms (acute, right, obtuse) and explains why 3:00 is a 90° right angle.",
       parentScript: "💬 Parent Discussion Starter: 'What exact angle do clock hands make at 3:00 PM vs 6:00 PM? Let's test on the interactive clock!'"
@@ -167,15 +168,15 @@ const questData = {
       mathTime: "15 Mins",
       mathTitle: "🔢 Giant Tape Floor Number Line",
       mathDesc: "Stick tape on floor (-5 to +5). Jump forward for positive addition, backward for negative subtraction! Real life: Submarines (- depth) vs Aeroplanes (+ height).",
-      mathAction: "openPolyTool",
+      mathAction: "openNumberLineTool",
       scienceTime: "20 Mins",
       scienceTitle: "🌱 Water Transport in Plant Stems",
       scienceDesc: "Place a plant stem or white flower in water with blue food ink. Observe colored xylem veins transporting water up!",
-      scienceAction: "openCircuitTool",
+      scienceAction: "openPlantStemSim",
       sstTime: "20 Mins",
       sstTitle: "🌏 Flashlight Globe & Earth Rotation",
       sstDesc: "Shine a flashlight on a spinning globe in a dark room. Observe Earth's rotation causing day in India while USA is in night!",
-      sstAction: "openGlobeTool",
+      sstAction: "openGlobeSim",
       recapTitle: "🏆 5-Min Teach-the-Parent Challenge",
       recapDesc: "Aadhav explains why Earth's rotation causes morning and night using the globe model.",
       parentScript: "💬 Parent Discussion Starter: 'If temperature in Siachen glacier is -15°C and Sahara desert is +45°C, what is the temperature difference?'"
@@ -188,12 +189,15 @@ const questData = {
       mathTime: "15 Mins",
       mathTitle: "🍕 Fraction Slicing Challenge",
       mathDesc: "Cut paper circles or roti into 2, 4, 8 equal pieces. Prove 1/2 = 2/4 = 4/8 visually with overlapping slices!",
+      mathAction: "openFractionsTool",
       scienceTime: "20 Mins",
       scienceTitle: "☕ Separation of Substances (DIY Filter)",
       scienceDesc: "Filter muddy water using sand, cotton, and gravel. Recover salt from saltwater by evaporation heating!",
+      scienceAction: "openStarchSim",
       sstTime: "20 Mins",
       sstTitle: "🧭 Latitudes & Longitudes Grid",
       sstDesc: "Locate Equator (0°), Tropic of Cancer (23.5°N), and India on the global coordinate grid.",
+      sstAction: "openGlobeSim",
       recapTitle: "🏆 5-Min Teach-the-Parent Challenge",
       recapDesc: "Aadhav explains how salt is harvested from sea water in Gujarat salt pans.",
       parentScript: "💬 Parent Discussion Starter: 'If you eat 3 slices out of an 8-slice pizza, what fraction is left for me?'"
@@ -206,13 +210,15 @@ const questData = {
       mathTime: "15 Mins",
       mathTitle: "📏 Perimeter vs Area with String",
       mathDesc: "Use a string to wrap around irregular objects (leaves, shoe, book) then measure length on a ruler!",
+      mathAction: "openPolyTool",
       scienceTime: "20 Mins",
       scienceTitle: "🦴 Cardboard Arm & Joint Model",
       scienceDesc: "Build a cardboard arm with rubber bands. Compare Ball-and-Socket (shoulder) vs Hinge joint (elbow).",
+      scienceAction: "openPlantStemSim",
       sstTime: "20 Mins",
       sstTitle: "🗳️ Gram Panchayat Roleplay",
       sstDesc: "Roleplay a village meeting to solve a broken drinking water pump crisis!",
-      sstAction: "openCivicsTool",
+      sstAction: "openCivicsSim",
       recapTitle: "🏆 5-Min Teach-the-Parent Challenge",
       recapDesc: "Aadhav demonstrates how hinge joints differ from ball-and-socket joints.",
       parentScript: "💬 Parent Discussion Starter: 'Why can your shoulder rotate 360 degrees, but your knee can only bend backwards?'"
@@ -225,12 +231,15 @@ const questData = {
       mathTime: "15 Mins",
       mathTitle: "📦 Cereal Box 3D Net Unfolding",
       mathDesc: "Unfold a toothpaste box to reveal its 2D Flat Net. Re-fold it into a 3D Cuboid!",
+      mathAction: "openPolyTool",
       scienceTime: "20 Mins",
       scienceTitle: "🧲 Floating Needle Compass",
       scienceDesc: "Rub a sewing needle with a magnet, float it on a leaf in water. Watch it align North-South!",
+      scienceAction: "openCircuitSim",
       sstTime: "20 Mins",
       sstTitle: "⛰️ Major Domains of Earth",
       sstDesc: "Draw Lithosphere (Land), Hydrosphere (Water), Atmosphere (Air) meeting at Biosphere where life thrives.",
+      sstAction: "openGlobeSim",
       recapTitle: "🏆 5-Min Teach-the-Parent Challenge",
       recapDesc: "Aadhav shows you how his floating needle compass points North.",
       parentScript: "💬 Parent Discussion Starter: 'How do ships in the middle of the ocean find direction at night without GPS?'"
@@ -238,7 +247,6 @@ const questData = {
   ]
 };
 
-// Generate distinct weeks 2, 3, 4
 for (let w = 2; w <= 4; w++) {
   questData[w] = questData[1].map((d, idx) => ({
     ...d,
@@ -355,21 +363,7 @@ function renderSessionCard(dayObj) {
   container.querySelectorAll('.quick-launch-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const act = btn.getAttribute('data-act');
-      if (act === 'openClockTool') {
-        switchTab('tab-math');
-        const btnClock = document.getElementById('btnToolClock');
-        if (btnClock) btnClock.click();
-      } else if (act === 'openPolyTool') {
-        switchTab('tab-math');
-        const btnPoly = document.getElementById('btnToolPolygon');
-        if (btnPoly) btnPoly.click();
-      } else if (act === 'openStarchTool' || act === 'openCircuitTool') {
-        switchTab('tab-science');
-      } else if (act === 'openGlobeTool' || act === 'openHarappaTool' || act === 'openCivicsTool' || act === 'openAshokaTool') {
-        switchTab('tab-sst');
-        const cardGlobe = document.getElementById('cardGlobeSim');
-        if (cardGlobe) cardGlobe.scrollIntoView({ behavior: 'smooth' });
-      }
+      handleActionLaunch(act);
     });
   });
 
@@ -390,6 +384,41 @@ function renderSessionCard(dayObj) {
       renderDaysStrip();
       initTrophyCabinet();
     });
+  }
+}
+
+function handleActionLaunch(act) {
+  if (act.startsWith('open') && act.endsWith('Tool')) {
+    switchTab('tab-math');
+    let btnId = 'btnToolPolygon';
+    if (act === 'openClockTool') btnId = 'btnToolClock';
+    if (act === 'openNumberLineTool') btnId = 'btnToolNumberLine';
+    if (act === 'openFractionsTool') btnId = 'btnToolFractions';
+
+    const btn = document.getElementById(btnId);
+    if (btn) btn.click();
+  } else if (act.startsWith('open') && act.endsWith('Sim')) {
+    if (act.includes('Circuit') || act.includes('Starch') || act.includes('PlantStem')) {
+      switchTab('tab-science');
+      let targetCardId = 'cardCircuitSim';
+      if (act === 'openStarchSim') targetCardId = 'cardStarchTest';
+      if (act === 'openPlantStemSim') targetCardId = 'cardPlantStemSim';
+
+      const card = document.getElementById(targetCardId);
+      if (card) {
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    } else {
+      switchTab('tab-sst');
+      let targetCardId = 'cardGlobeSim';
+      if (act === 'openHarappaSim') targetCardId = 'cardHarappaSim';
+      if (act === 'openCivicsSim') targetCardId = 'cardCivicsSim';
+
+      const card = document.getElementById(targetCardId);
+      if (card) {
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    }
   }
 }
 
@@ -511,7 +540,7 @@ function initPolygonCanvas() {
 }
 
 /* ==========================================================================
-   4. INTERACTIVE CLOCK ANGLE CANVAS ENGINE
+   4. INTERACTIVE CLOCK ANGLE CANVAS
    ========================================================================== */
 function initClockCanvas() {
   const canvas = document.getElementById('clockCanvas');
@@ -637,7 +666,178 @@ function initClockCanvas() {
 }
 
 /* ==========================================================================
-   5. SCIENCE LAB & SST EXPLORER (DAY 3 ENHANCED)
+   5. INTERACTIVE NUMBER LINE CANVAS (DAY 3 FEATURE)
+   ========================================================================== */
+let numLinePos = 0;
+
+function initNumberLineCanvas() {
+  const canvas = document.getElementById('numLineCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const posText = document.getElementById('numLinePosText');
+  const realText = document.getElementById('numLineRealWorld');
+
+  function drawNumberLine() {
+    const parentContainer = canvas.parentElement;
+    const parentWidth = parentContainer ? parentContainer.clientWidth : 340;
+    const targetWidth = Math.max(280, Math.min(480, parentWidth - 20));
+    canvas.width = targetWidth;
+    canvas.height = 200;
+
+    if (posText) posText.textContent = `${numLinePos > 0 ? '+' : ''}${numLinePos}`;
+    if (realText) {
+      if (numLinePos === 0) realText.innerHTML = "📍 <strong>Ground Level (0 meters)</strong>";
+      else if (numLinePos > 0) realText.innerHTML = `✈️ <strong>Aeroplane Altitude (+${numLinePos * 100} meters height)</strong>`;
+      else realText.innerHTML = `🌊 <strong>Submarine Depth (${numLinePos * 10m} depth below sea)</strong>`;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const padding = 30;
+    const startX = padding;
+    const endX = canvas.width - padding;
+    const y = canvas.height / 2;
+
+    // Draw Main Line
+    ctx.beginPath();
+    ctx.moveTo(startX, y);
+    ctx.lineTo(endX, y);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#38bdf8';
+    ctx.stroke();
+
+    // Draw Ticks (-10 to +10)
+    const minVal = -10;
+    const maxVal = 10;
+    const range = maxVal - minVal;
+
+    for (let i = minVal; i <= maxVal; i++) {
+      const x = startX + ((i - minMin(minVal)) / range) * (endX - startX);
+      const isZero = i === 0;
+
+      ctx.beginPath();
+      ctx.moveTo(x, y - (isZero ? 14 : 8));
+      ctx.lineTo(x, y + (isZero ? 14 : 8));
+      ctx.lineWidth = isZero ? 4 : 2;
+      ctx.strokeStyle = isZero ? '#f59e0b' : '#94a3b8';
+      ctx.stroke();
+
+      ctx.fillStyle = isZero ? '#f59e0b' : '#94a3b8';
+      ctx.font = `bold ${isZero ? 14 : 11}px Outfit, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(i.toString(), x, y + (isZero ? 28 : 22));
+    }
+
+    // Helper minMin function
+    function minMin(m) { return m; }
+
+    // Draw Jumper Character Node at numLinePos
+    const charX = startX + ((numLinePos - minVal) / range) * (endX - startX);
+    ctx.beginPath();
+    ctx.arc(charX, y - 20, 14, 0, Math.PI * 2);
+    ctx.fillStyle = '#a855f7';
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 12px Outfit, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText("🚶", charX, y - 20);
+  }
+
+  window.drawNumberLineCanvas = drawNumberLine;
+  window.addEventListener('resize', drawNumberLineCanvas);
+
+  const btnFwd = document.getElementById('btnJumpForward3');
+  const btnBwd = document.getElementById('btnJumpBack3');
+  const btnReset = document.getElementById('btnResetNumLine');
+
+  if (btnFwd) btnFwd.addEventListener('click', () => { if (numLinePos < 10) numLinePos = Math.min(10, numLinePos + 3); drawNumberLine(); });
+  if (btnBwd) btnBwd.addEventListener('click', () => { if (numLinePos > -10) numLinePos = Math.max(-10, numLinePos - 3); drawNumberLine(); });
+  if (btnReset) btnReset.addEventListener('click', () => { numLinePos = 0; drawNumberLine(); });
+
+  drawNumberLine();
+}
+
+/* ==========================================================================
+   6. INTERACTIVE FRACTION SLICER CANVAS (DAY 4 FEATURE)
+   ========================================================================== */
+function initFractionCanvas() {
+  const canvas = document.getElementById('fractionCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const totalSlider = document.getElementById('sliceSlider');
+  const selectedSlider = document.getElementById('selectedSlicesSlider');
+  const totalValText = document.getElementById('sliceCountVal');
+  const selectedValText = document.getElementById('selectedSlicesVal');
+  const fractionMathText = document.getElementById('fractionMathText');
+
+  function drawFractionPizza() {
+    const parentContainer = canvas.parentElement;
+    const parentWidth = parentContainer ? parentContainer.clientWidth : 340;
+    const targetWidth = Math.max(280, Math.min(400, parentWidth - 20));
+    canvas.width = targetWidth;
+    canvas.height = targetWidth;
+
+    const total = parseInt(totalSlider.value);
+    if (selectedSlider) {
+      selectedSlider.max = total;
+      if (parseInt(selectedSlider.value) > total) selectedSlider.value = total;
+    }
+    const eaten = parseInt(selectedSlider.value);
+
+    if (totalValText) totalValText.textContent = `${total} Slices`;
+    if (selectedValText) selectedValText.textContent = `${eaten} Slices Eaten`;
+
+    const gcdVal = gcd(eaten, total);
+    const simEaten = eaten / gcdVal;
+    const simTotal = total / gcdVal;
+    const pct = Math.round((eaten / total) * 100);
+
+    if (fractionMathText) {
+      fractionMathText.innerHTML = `Fraction = <strong>${eaten}/${total}</strong> = <strong style="color: var(--accent-green);">${simEaten}/${simTotal} (${pct}%)</strong>`;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = canvas.width * 0.38;
+
+    for (let i = 0; i < total; i++) {
+      const startAngle = (i * 2 * Math.PI) / total - Math.PI / 2;
+      const endAngle = ((i + 1) * 2 * Math.PI) / total - Math.PI / 2;
+      const isEaten = i < eaten;
+
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+      ctx.closePath();
+
+      ctx.fillStyle = isEaten ? '#f59e0b' : 'rgba(56, 189, 248, 0.15)';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+    }
+  }
+
+  function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+  window.drawFractionCanvas = drawFractionPizza;
+  window.addEventListener('resize', drawFractionCanvas);
+
+  if (totalSlider) totalSlider.addEventListener('input', drawFractionPizza);
+  if (selectedSlider) selectedSlider.addEventListener('input', drawFractionPizza);
+
+  drawFractionPizza();
+}
+
+/* ==========================================================================
+   7. SCIENCE LAB & SST EXPLORER
    ========================================================================== */
 function initScienceLab() {
   const matBtns = document.querySelectorAll('.mat-btn');
@@ -687,6 +887,31 @@ function initScienceLab() {
       }
     });
   }
+
+  // Day 3 Plant Stem Dye Sim
+  const dyeBtns = document.querySelectorAll('.dye-btn');
+  const stemDisp = document.getElementById('stemDisplay');
+  const stemStatus = document.getElementById('stemStatusText');
+  const stemRes = document.getElementById('stemResultText');
+
+  dyeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const col = btn.getAttribute('data-color');
+      if (col === 'blue') {
+        if (stemDisp) stemDisp.innerHTML = "💧🌱<span style='color:#38bdf8; font-weight:bold;'>[BLUE VEINS]</span>";
+        if (stemStatus) stemStatus.textContent = "Water mixed with Blue Ink!";
+        if (stemRes) stemRes.innerHTML = "✅ Blue ink traveled up Xylem vessels into leaf veins within 2 hours!";
+      } else if (col === 'red') {
+        if (stemDisp) stemDisp.innerHTML = "🧪🌱<span style='color:#f43f5e; font-weight:bold;'>[RED VEINS]</span>";
+        if (stemStatus) stemStatus.textContent = "Water mixed with Red Food Dye!";
+        if (stemRes) stemRes.innerHTML = "✅ Red dye traveled up Xylem tubes proving upward water transport!";
+      } else {
+        if (stemDisp) stemDisp.innerHTML = "🌱";
+        if (stemStatus) stemStatus.textContent = "Stem is in clear water.";
+        if (stemRes) stemRes.innerHTML = "Observe how Xylem vessels carry water upwards against gravity!";
+      }
+    });
+  });
 
   const objBtns = document.querySelectorAll('.obj-btn');
   const beakerObjs = document.getElementById('beakerObjects');
@@ -741,7 +966,6 @@ function initSSTExplorer() {
     });
   }
 
-  // Globe Rotation
   const globeBall = document.getElementById('globeBall');
   const sunStatus = document.getElementById('sunlightStatus');
   let isRotated = false;
@@ -759,7 +983,6 @@ function initSSTExplorer() {
     });
   }
 
-  // Latitudes Line Buttons
   const latBtns = document.querySelectorAll('.lat-btn');
   const latDisp = document.getElementById('latInfoDisplay');
 
@@ -770,7 +993,6 @@ function initSSTExplorer() {
     });
   });
 
-  // Day 3 Quiz Handlers
   const quizBtns = document.querySelectorAll('.quiz-ans-btn');
   const quizFeedback = document.getElementById('quizFeedbackText');
 
@@ -789,7 +1011,6 @@ function initSSTExplorer() {
     });
   });
 
-  // Panchayat Voting
   const optBtns = document.querySelectorAll('.option-btn');
   const panFeed = document.getElementById('panchayatFeedback');
 
@@ -810,14 +1031,17 @@ function initSSTExplorer() {
 }
 
 /* ==========================================================================
-   6. TROPHY CABINET & BADGES
+   8. TROPHY CABINET & BADGES
    ========================================================================== */
 function initTrophyCabinet() {
   const trophies = [
     { icon: "📐", title: "Polygon Master", desc: "Explored diagonal formulas in Math", badgeName: "Polygon & Circuit Wizard" },
     { icon: "🕒", title: "Angle Hunter", desc: "Mastered clock angles (90° Right, Acute, Obtuse)", badgeName: "Angle Hunter" },
+    { icon: "🔢", title: "Number Line Jumper", desc: "Mastered floor number lines & integers", badgeName: "Globe Trotter" },
+    { icon: "🍕", title: "Fraction Slicer", desc: "Proved fraction equivalence 1/2 = 2/4", badgeName: "Lab Chemist" },
     { icon: "⚡", title: "Circuit Wizard", desc: "Tested conductors vs insulators", badgeName: "Polygon & Circuit Wizard" },
     { icon: "🥔", title: "Starch Detective", desc: "Completed iodine food science test", badgeName: "Lab Chemist" },
+    { icon: "🌱", title: "Botany Scientist", desc: "Observed xylem water transport in stems", badgeName: "Globe Trotter" },
     { icon: "🏺", title: "Indus Valley Explorer", desc: "Discovered Harappan architectural seals", badgeName: "Master Explorer" },
     { icon: "🌏", title: "Globe Navigator", desc: "Mastered Earth day-night rotation", badgeName: "Globe Trotter" }
   ];
